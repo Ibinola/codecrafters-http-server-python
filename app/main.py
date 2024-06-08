@@ -9,8 +9,21 @@ def main():
     # Uncomment this to pass the first stage
     #
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-    response =  server_socket.accept() # wait for client
+    connection, response =  server_socket.accept() # wait for client
     response[0].sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+
+    while True:
+        request = connection.recv(1500).decode()
+        headers = request.split('\n')
+        first_header_components = headers[0].split()
+
+        path = first_header_components[1]
+
+        if path == '/':
+            return 'HTTP/1.1 200 OK\r\n\r\n'
+        else:
+            return 'HTTP/1.1 404 Not Found\r\n\r\n'
+
     
 
 
